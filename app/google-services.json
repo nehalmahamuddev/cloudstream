@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "1070127993965",
+    "project_id": "goplay-stream-83971",
+    "storage_bucket": "goplay-stream-83971.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070127993965:android:adf333d609df7c6e8e5b64",
+        "android_client_info": {
+          "package_name": "com.goplay.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnYdWDzq_paYQ_c9IkVA2vSvyvdNlPKcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070127993965:android:adf333d609df7c6e8e5b65",
+        "android_client_info": {
+          "package_name": "com.goplay.app.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnYdWDzq_paYQ_c9IkVA2vSvyvdNlPKcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070127993965:android:adf333d609df7c6e8e5b66",
+        "android_client_info": {
+          "package_name": "com.goplay.app.prerelease"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnYdWDzq_paYQ_c9IkVA2vSvyvdNlPKcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070127993965:android:adf333d609df7c6e8e5b67",
+        "android_client_info": {
+          "package_name": "com.goplay.app.prerelease.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnYdWDzq_paYQ_c9IkVA2vSvyvdNlPKcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

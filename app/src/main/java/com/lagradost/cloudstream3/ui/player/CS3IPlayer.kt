@@ -25,6 +25,7 @@ import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
@@ -654,8 +655,11 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun setPlaybackSpeed(speed: Float) {
-        exoPlayer?.setPlaybackSpeed(speed)
-        playBackSpeed = speed
+        val clamped = speed.coerceIn(0.1f, 4.0f)
+        // Keep pitch at 1.0 so audio is time-stretched instead of pitch-shifted
+        // (no "chipmunk" effect) at higher playback speeds.
+        exoPlayer?.playbackParameters = PlaybackParameters(clamped, 1.0f)
+        playBackSpeed = clamped
     }
 
     companion object {
