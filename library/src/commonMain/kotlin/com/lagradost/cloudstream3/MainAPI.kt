@@ -57,7 +57,7 @@ import kotlin.time.Instant
 @Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
 @RequiresOptIn(
     message = "This API is only available on prerelease builds. " +
-              "Using it will cause CloudStream stable to crash.",
+              "Using it will cause Openstream stable to crash.",
     level = RequiresOptIn.Level.ERROR
 )
 annotation class Prerelease

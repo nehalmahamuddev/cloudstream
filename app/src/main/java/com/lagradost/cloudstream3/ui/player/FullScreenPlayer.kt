@@ -490,17 +490,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private fun setPlayBackSpeed(speed: Float) {
-        try {
-            DataStoreHelper.playBackSpeed = speed
-            playerBinding?.playerSpeedBtt?.text =
-                getString(R.string.player_speed_text_format).format(speed)
-                    .replace(".0x", "x")
-        } catch (e: Exception) {
-            // the format string was wrong
-            logError(e)
-        }
-
-        player.setPlaybackSpeed(speed)
+        val clampedSpeed = speed.coerceIn(0.1f, 4.0f)
+        DataStoreHelper.playBackSpeed = clampedSpeed
+        // Keep a static "Speed" label on the button; the current multiplier is shown in the speed dialog.
+        playerBinding?.playerSpeedBtt?.text = getString(R.string.player_speed_label)
+        player.setPlaybackSpeed(clampedSpeed)
     }
 
     private fun skipOp() {
@@ -633,14 +627,19 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
     }
 
+    /** Formats a speed multiplier without trailing zeros, e.g. 1.0 -> "1x", 1.50 -> "1.5x". */
+    private fun formatSpeedLabel(speed: Float): String {
+        return "%.2f".format(speed).trimEnd('0').trimEnd('.', ',') + "x"
+    }
+
     @SuppressLint("SetTextI18n")
     fun updateSpeedDialogBinding(binding: SpeedDialogBinding) {
         val speed = player.getPlaybackSpeed()
-        binding.speedText.text = "%.2fx".format(speed).replace(".0x", "x")
+        binding.speedText.text = formatSpeedLabel(speed)
         // Android crashes if you don't round to an exact step size
-        binding.speedBar.value =
-            (speed.coerceIn(0.1f, 2.0f) / binding.speedBar.stepSize).roundToInt()
-                .toFloat() * binding.speedBar.stepSize
+        val snapped = (speed.coerceIn(0.1f, 4.0f) / binding.speedBar.stepSize).roundToInt()
+            .toFloat() * binding.speedBar.stepSize
+        binding.speedBar.value = snapped.coerceIn(binding.speedBar.valueFrom, binding.speedBar.valueTo)
     }
 
     private fun showSpeedDialog() {
@@ -655,9 +654,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         updateSpeedDialogBinding(binding)
         for ((view, speed) in arrayOf(
             binding.speed25 to 0.25f,
+            binding.speed50 to 0.5f,
+            binding.speed75 to 0.75f,
             binding.speed100 to 1.0f,
             binding.speed125 to 1.25f,
             binding.speed150 to 1.5f,
+            binding.speed175 to 1.75f,
             binding.speed200 to 2.0f,
         )) {
             view.setOnClickListener {
@@ -666,13 +668,18 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
         }
 
+        binding.speedReset.setOnClickListener {
+            setPlayBackSpeed(1.0f)
+            updateSpeedDialogBinding(binding)
+        }
+
         binding.speedMinus.setOnClickListener {
             setPlayBackSpeed(maxOf((player.getPlaybackSpeed() - 0.1f), 0.1f))
             updateSpeedDialogBinding(binding)
         }
 
         binding.speedPlus.setOnClickListener {
-            setPlayBackSpeed(minOf((player.getPlaybackSpeed() + 0.1f), 2.0f))
+            setPlayBackSpeed(minOf((player.getPlaybackSpeed() + 0.1f), 4.0f))
             updateSpeedDialogBinding(binding)
         }
 
@@ -1410,7 +1417,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
                 playBackSpeedEnabled = settingsManager.getBoolean(
                     ctx.getString(R.string.playback_speed_enabled_key),
-                    false
+                    true
                 )
                 playBackCompressorEnabled = settingsManager.getBoolean(
                     ctx.getString(R.string.compressor_enabled_key),

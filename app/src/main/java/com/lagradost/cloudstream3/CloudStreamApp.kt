@@ -71,16 +71,20 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
-        // If we want to initialize Coil as early as possible, maybe when
-        // loading an image or GIF in a splash screen activity.
-        // buildImageLoader(applicationContext)
+
+        // Initialize Firebase Analytics, Crashlytics, and Performance Monitoring
+        com.lagradost.cloudstream3.analytics.AnalyticsManager.init(this)
 
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
         }.also {
             exceptionHandler = it
-            Thread.setDefaultUncaughtExceptionHandler(it)
+            val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+            Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+                com.lagradost.cloudstream3.analytics.AnalyticsManager.recordException(throwable)
+                it.uncaughtException(thread, throwable)
+            }
         }
 
         AppDebug.isDebug = BuildConfig.DEBUG
