@@ -1,0 +1,77 @@
+name: Build & Release Stable App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag / Release version (e.g. v1.0.0)'
+        required: false
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Stable APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Stable Release APK
+        run: ./gradlew assembleStableRelease
+
+      - name: Sign APK (Debug/Self-sign for easy installation)
+        uses: ralfirza/apk-signer@v1
+        id: sign_apk
+        with:
+          apk-file: app/build/outputs/apk/stable/release/app-stable-release-unsigned.apk
+        continue-on-error: true
+
+      - name: Prepare APK Output
+        id: prepare_apk
+        run: |
+          mkdir -p release_apks
+          # Check for signed APK first, fallback to unsigned or any produced apk
+          if ls app/build/outputs/apk/stable/release/*-signed.apk 1> /dev/null 2>&1; then
+            cp app/build/outputs/apk/stable/release/*-signed.apk release_apks/CloudStream-stable.apk
+          else
+            cp app/build/outputs/apk/stable/release/*.apk release_apks/CloudStream-stable.apk
+          fi
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CloudStream-Stable-APK
+          path: release_apks/CloudStream-stable.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          name: CloudStream Stable ${{ github.event.inputs.tag_name || github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            release_apks/CloudStream-stable.apk
