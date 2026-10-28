@@ -5,7 +5,7 @@
     1. Fetches latest commits from recloudstream/cloudstream
     2. Fast-forwards your local 'master' branch
     3. Pushes updated 'master' to your fork (origin/master)
-    4. Optionally merges updated 'master' into your custom 'upstream' branch
+    4. Optionally merges updated 'master' into your custom development branch (custom-dev)
 #>
 
 [CmdletBinding()]
