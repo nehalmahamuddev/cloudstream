@@ -56,25 +56,25 @@ jobs:
           APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | sort -V | tail -n 1)
           
           if [ -n "$APKSIGNER" ]; then
-            $APKSIGNER sign --ks "$KEYSTORE_PATH" --ks-pass pass:android --key-pass pass:android --out release_apks/CloudStream-stable.apk "$RAW_APK"
+            $APKSIGNER sign --ks "$KEYSTORE_PATH" --ks-pass pass:android --key-pass pass:android --out release_apks/openstream.apk "$RAW_APK"
           else
-            cp "$RAW_APK" release_apks/CloudStream-stable.apk
+            cp "$RAW_APK" release_apks/openstream.apk
           fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CloudStream-Stable-APK
-          path: release_apks/CloudStream-stable.apk
+          name: Openstream-Stable-APK
+          path: release_apks/openstream.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
-          name: CloudStream Stable ${{ github.event.inputs.tag_name || github.ref_name }}
+          name: Openstream Stable ${{ github.event.inputs.tag_name || github.ref_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
           files: |
-            release_apks/CloudStream-stable.apk
+            release_apks/openstream.apk
