@@ -259,7 +259,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             val prefValues =
                 enumValues<AutoDownloadMode>().sortedBy { x -> x.value }.map { x -> x.value }
 
-            val current = settingsManager.getInt(getString(R.string.auto_download_plugins_key), 0)
+            val current = settingsManager.getInt(getString(R.string.auto_download_plugins_key), AutoDownloadMode.All.value)
 
             activity?.showBottomDialog(
                 prefNames.toList(),

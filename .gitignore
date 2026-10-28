@@ -221,8 +221,16 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-### AndroidStudio Patch ###
-
-!/gradle/wrapper/gradle-wrapper.jar
-
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,java,android,androidstudio,visualstudiocode
+
+# Tooling and generated Knowledge Graph
+.agents/
+graphify-out/
+
+# --- PRIVATE REPO ONLY ---
+# The three files below are intentionally tracked so any device can build the identical,
+# update-compatible signed app after a plain `git clone`. KEEP THIS REPOSITORY PRIVATE.
+# If it is ever made public, rotate the signing key immediately (all users would have to reinstall).
+!openstream-release.jks
+!keystore.properties
+!app/google-services.json

@@ -5,92 +5,124 @@
     android:id="@+id/setup_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/openstream_logo"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_baseline_extension_24"
+        app:tint="?attr/colorPrimary" />
 
     <TextView
+        android:id="@+id/setup_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="@string/extensions"
-        android:textSize="18sp" />
+        android:text="Setting up Openstream Extensions"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/setup_subtext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="@string/setup_extensions_subtext" />
+        android:text="Automatically configuring repository and loading extensions..."
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="14sp"
+        android:alpha="0.8" />
 
     <LinearLayout
-        android:id="@+id/blank_repo_screen"
+        android:id="@+id/progress_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:gravity="center"
-        android:orientation="vertical"
-        tools:visibility="gone">
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_baseline_extension_24" />
+        <ProgressBar
+            android:id="@+id/setup_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginHorizontal="16dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/setup_progress_text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="@string/blank_repo_message"
-            android:textSize="16sp" />
-
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:id="@+id/list_repositories"-->
-<!--            style="@style/WhiteButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:text="@string/view_public_repositories_button" />-->
+            android:text="Connecting to Openstream repository..."
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/repo_recycler_view"
+    <LinearLayout
+        android:id="@+id/error_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:nextFocusLeft="@id/prev_btt"
-        android:nextFocusRight="@id/next_btt"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/repository_item"
-        tools:visibility="visible" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Unable to download Openstream repository after multiple attempts.\nPlease check your network connection and try again."
+            android:textColor="?attr/colorError"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/retry_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Retry" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:id="@+id/apply_btt_holder"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="-60dp"
-        android:gravity="bottom|end"
+        android:layout_height="wrap_content"
+        android:gravity="end"
         android:orientation="horizontal">
-
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:id="@+id/view_public_repositories_button"-->
-<!--            style="@style/WhiteButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_gravity="center_vertical|end"-->
-<!--            android:text="@string/add_repository" />-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next_btt"
             style="@style/WhiteButton"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical|end"
+            android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="@string/next" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/prev_btt"
             style="@style/BlackButton"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical|end"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/previous" />
     </LinearLayout>
-
 
 </LinearLayout>
