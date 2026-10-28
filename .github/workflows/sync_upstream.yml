@@ -1,0 +1,32 @@
+name: Sync Upstream Master
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
+
+jobs:
+  sync:
+    name: Sync Master from Official CloudStream
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Sync with recloudstream/cloudstream
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add upstream-official https://github.com/recloudstream/cloudstream.git
+          git fetch upstream-official master
+          git merge --ff-only upstream-official/master || git merge upstream-official/master -m "chore(sync): merge official upstream updates"
+          git push origin master
+
+
