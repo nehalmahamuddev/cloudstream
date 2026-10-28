@@ -40,24 +40,25 @@ jobs:
       - name: Build Stable Release APK
         run: ./gradlew assembleStableRelease
 
-      - name: Sign APK with debug keystore
+      - name: Sign APK with Openstream Release Keystore
         run: |
-          # Use Android build-tools apksigner to sign with the standard debug key so it installs seamlessly
-          KEYSTORE_PATH="$HOME/.android/debug.keystore"
-          if [ ! -f "$KEYSTORE_PATH" ]; then
-            mkdir -p "$HOME/.android"
-            keytool -genkey -v -keystore "$KEYSTORE_PATH" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-          fi
-          
           mkdir -p release_apks
           RAW_APK=$(ls app/build/outputs/apk/stable/release/*.apk | head -n 1)
           
           # Find Android SDK apksigner
           APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | sort -V | tail -n 1)
           
-          if [ -n "$APKSIGNER" ]; then
-            $APKSIGNER sign --ks "$KEYSTORE_PATH" --ks-pass pass:android --key-pass pass:android --out release_apks/openstream.apk "$RAW_APK"
+          if [ -f "openstream-release.jks" ] && [ -n "$APKSIGNER" ]; then
+            echo "Signing with openstream-release.jks..."
+            $APKSIGNER sign \
+              --ks openstream-release.jks \
+              --ks-pass pass:openstream123 \
+              --ks-key-alias openstream \
+              --key-pass pass:openstream123 \
+              --out release_apks/openstream.apk \
+              "$RAW_APK"
           else
+            echo "Fallback copying APK..."
             cp "$RAW_APK" release_apks/openstream.apk
           fi
 
