@@ -302,7 +302,7 @@ object MainActivityScreen : Screen {
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Image(
-                                        painter = painterResource(R.mipmap.ic_launcher),
+                                        painter = painterResource(R.drawable.ic_launcher_foreground),
                                         contentDescription = null,
                                         modifier = Modifier.size(34.dp)
                                     )
@@ -514,7 +514,7 @@ object MainActivityScreen : Screen {
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Image(
-                                    painter = painterResource(R.mipmap.ic_launcher),
+                                    painter = painterResource(R.drawable.ic_launcher_foreground),
                                     contentDescription = null,
                                     modifier = Modifier.size(36.dp)
                                 )
