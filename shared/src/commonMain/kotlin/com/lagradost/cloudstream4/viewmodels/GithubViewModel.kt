@@ -290,16 +290,25 @@ class GithubViewModel(
             contentType = remoteContentType
         )
 
-        // If on stable, check that the version matches
+        // If on stable, check that the version matches or current is newer
         val cleanReleaseVer = release.displayName.trim().removePrefix("v").removePrefix("V").substringBefore("-")
         val cleanCurrentVer = versionName.trim().removePrefix("v").removePrefix("V").substringBefore("-")
         val tagVer = release.tagName.trim().removePrefix("v").removePrefix("V").substringBefore("-")
+
+        val targetVer = if (cleanReleaseVer.isNotBlank() && cleanReleaseVer.any { it.isDigit() }) {
+            cleanReleaseVer
+        } else if (tagVer.isNotBlank() && tagVer.any { it.isDigit() }) {
+            tagVer
+        } else {
+            release.displayName
+        }
 
         val isUpToDate = !prerelease && (
             release.displayName.equals(versionName, ignoreCase = true) ||
             release.tagName.equals(versionName, ignoreCase = true) ||
             (cleanReleaseVer.isNotBlank() && cleanReleaseVer.equals(cleanCurrentVer, ignoreCase = true)) ||
-            (tagVer.isNotBlank() && tagVer.equals(cleanCurrentVer, ignoreCase = true))
+            (tagVer.isNotBlank() && tagVer.equals(cleanCurrentVer, ignoreCase = true)) ||
+            (cleanCurrentVer.any { it.isDigit() } && targetVer.any { it.isDigit() } && compareSemver(cleanCurrentVer, targetVer) >= 0)
         )
 
         if (isUpToDate) {
@@ -328,5 +337,16 @@ class GithubViewModel(
                 )
             )
         }
+    }
+    private fun compareSemver(v1: String, v2: String): Int {
+        val parts1 = v1.split('.').mapNotNull { it.takeWhile { c -> c.isDigit() }.toIntOrNull() }
+        val parts2 = v2.split('.').mapNotNull { it.takeWhile { c -> c.isDigit() }.toIntOrNull() }
+        val maxLen = maxOf(parts1.size, parts2.size)
+        for (i in 0 until maxLen) {
+            val p1 = parts1.getOrElse(i) { 0 }
+            val p2 = parts2.getOrElse(i) { 0 }
+            if (p1 != p2) return p1.compareTo(p2)
+        }
+        return 0
     }
 }
