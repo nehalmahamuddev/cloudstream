@@ -131,8 +131,10 @@ android {
         applicationId = "com.goplay.app"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
-        versionName = libs.versions.versionName.get()
+        versionCode = (project.findProperty("appVersionCode") as? String)?.toIntOrNull()
+            ?: libs.versions.versionCode.get().toInt()
+        versionName = (project.findProperty("appVersionName") as? String)
+            ?: libs.versions.versionName.get()
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 

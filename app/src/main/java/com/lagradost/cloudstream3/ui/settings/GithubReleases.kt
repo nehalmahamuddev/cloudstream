@@ -94,11 +94,20 @@ object GithubReleases : GithubRepository {
             throw FileNotFoundException()
         }
 
+        val assetNameWithoutExt = foundAsset.name.substringBeforeLast(".")
+        val cleanVersion = if (assetNameWithoutExt.contains(Regex("\\d"))) {
+            assetNameWithoutExt
+        } else {
+            // Asset is named e.g. "openstream.apk", so extract version from release tagName (e.g. "v1.0.3-openstream" -> "1.0.3")
+            val tagVersion = latestRelease.tagName.removePrefix("v").substringBefore("-")
+            if (tagVersion.contains(Regex("\\d"))) tagVersion else latestRelease.tagName.removePrefix("v")
+        }
+
         return GithubFile(
             digest = foundAsset.digest,
             downloadUrl = foundAsset.browserDownloadUrl,
-            displayName = foundAsset.name.substringBeforeLast("."),
-            changeLog = latestRelease.body,
+            displayName = cleanVersion,
+            changeLog = latestRelease.body ?: "",
             tagName = latestRelease.tagName,
             nodeId = latestRelease.nodeId
         )

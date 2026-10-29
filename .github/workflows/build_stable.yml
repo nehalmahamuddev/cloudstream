@@ -7,9 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Tag / Release version (e.g. v1.0.0)'
+        description: 'Tag / Release version (e.g. v1.0.4-openstream)'
         required: false
-        default: 'v1.0.0'
+        default: 'v1.0.4-openstream'
+      changelog:
+        description: 'Changelog / Release notes (optional)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -38,7 +42,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build Stable Release APK
-        run: ./gradlew assembleStableRelease
+        run: |
+          RAW_TAG="${{ github.event.inputs.tag_name || github.ref_name }}"
+          TAG_CLEAN=$(echo "$RAW_TAG" | sed -E 's/^v//' | sed -E 's/-.*//')
+          if [ -n "$TAG_CLEAN" ] && [[ "$TAG_CLEAN" =~ [0-9] ]]; then
+            echo "Building version $TAG_CLEAN from tag $RAW_TAG"
+            ./gradlew assembleStableRelease -PappVersionName="$TAG_CLEAN"
+          else
+            ./gradlew assembleStableRelease
+          fi
 
       - name: Sign APK with Openstream Release Keystore
         run: |
@@ -76,6 +88,13 @@ jobs:
           name: Openstream Stable ${{ github.event.inputs.tag_name || github.ref_name }}
           draft: false
           prerelease: false
-          generate_release_notes: true
+          generate_release_notes: false
+          body: |
+            ${{ github.event.inputs.changelog || '✨ **What''s New in Openstream:**
+            • Clean minimalist In-App update dialog with catalog
+            • Official Openstream release key integrated
+            • Automatic plugin updates enabled
+            • Dynamic Range Compressor audio booster support
+            • Performance & stability enhancements' }}
           files: |
             release_apks/openstream.apk
