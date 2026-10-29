@@ -2,14 +2,16 @@ name: Build & Release Stable App
 
 on:
   push:
+    branches:
+      - master
     tags:
       - 'v*'
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Tag / Release version (e.g. v1.0.4-openstream)'
+        description: 'Tag / Release version (e.g. v1.0.5-openstream)'
         required: false
-        default: 'v1.0.4-openstream'
+        default: 'v1.0.5-openstream'
       changelog:
         description: 'Changelog / Release notes (optional)'
         required: false
@@ -35,6 +37,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Read Version from toml
+        id: app_version
+        run: |
+          VER=$(grep 'versionName =' gradle/libs.versions.toml | cut -d '"' -f 2)
+          echo "version=$VER" >> $GITHUB_OUTPUT
+          echo "Resolved version from toml: $VER"
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -46,10 +55,11 @@ jobs:
           RAW_TAG="${{ github.event.inputs.tag_name || github.ref_name }}"
           TAG_CLEAN=$(echo "$RAW_TAG" | sed -E 's/^v//' | sed -E 's/-.*//')
           if [ -n "$TAG_CLEAN" ] && [[ "$TAG_CLEAN" =~ [0-9] ]]; then
-            echo "Building version $TAG_CLEAN from tag $RAW_TAG"
+            echo "Building version $TAG_CLEAN from tag/input $RAW_TAG"
             ./gradlew assembleStableRelease -PappVersionName="$TAG_CLEAN"
           else
-            ./gradlew assembleStableRelease
+            echo "Building version ${{ steps.app_version.outputs.version }} from libs.versions.toml"
+            ./gradlew assembleStableRelease -PappVersionName="${{ steps.app_version.outputs.version }}"
           fi
 
       - name: Sign APK with Openstream Release Keystore
@@ -82,16 +92,15 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
-          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
-          name: Openstream Stable ${{ github.event.inputs.tag_name || github.ref_name }}
+          tag_name: ${{ github.event.inputs.tag_name || (startsWith(github.ref, 'refs/tags/') && github.ref_name) || format('v{0}-openstream', steps.app_version.outputs.version) }}
+          name: Openstream Stable ${{ github.event.inputs.tag_name || (startsWith(github.ref, 'refs/tags/') && github.ref_name) || format('v{0}-openstream', steps.app_version.outputs.version) }}
           draft: false
           prerelease: false
           generate_release_notes: false
           body: |
             ${{ github.event.inputs.changelog || '✨ **What''s New in Openstream:**
-            • Clean minimalist In-App update dialog with catalog
+            • Themed In-App update dialog matching active app colors
             • Official Openstream release key integrated
             • Automatic plugin updates enabled
             • Dynamic Range Compressor audio booster support
