@@ -1,0 +1,15 @@
+{
+    "versionCode": 74,
+    "versionName": "4.8.6",
+    "apkUrl": "https://pub-e9a64ec2e4424ee6b04d9dac6a883b3b.r2.dev/goplay.apk",
+    "releaseNotes": [
+        "Openstream 4.8.6",
+        "Rebuilt on latest upstream CloudStream core",
+        "Automated Openstream extension repository synchronization",
+        "Pitch-corrected playback speed control up to 4x",
+        "Optional real-time TV clock and performance telemetry"
+    ],
+    "mandatory": false,
+    "apkSize": 76235477,
+    "sha256": "b8e661d24927b56594791bdf121602f8827f4b752c24f725b5b979f376f9f4e8"
+}

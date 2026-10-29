@@ -1366,6 +1366,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
 
                 ioSafe {
+                    com.lagradost.cloudstream3.plugins.OpenstreamRepoManager.syncRepositoriesOnLaunch(this@MainActivity)
+
                     if (settingsManager.getBoolean(
                             getString(R.string.auto_update_plugins_key),
                             true
@@ -1382,9 +1384,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     /*val autoDownloadPlugin = AutoDownloadMode.getEnum(
                         settingsManager.getInt(
                             getString(R.string.auto_download_plugins_key),
-                            0
+                            AutoDownloadMode.All.value
                         )
-                    ) ?: AutoDownloadMode.Disable
+                    ) ?: AutoDownloadMode.All
                     if (autoDownloadPlugin != AutoDownloadMode.Disable) {
                         PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
                             this@MainActivity,
@@ -2031,9 +2033,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (getKey<Boolean>(HAS_DONE_SETUP_KEY, false) != true) {
                 navController.navigate(R.id.navigation_setup_language)
                 // If no plugins bring up extensions screen
-            } else if (PluginManager.getPluginsOnline().isEmpty()
-                && PluginManager.getPluginsLocal().isEmpty()
-//                && PREBUILT_REPOSITORIES.isNotEmpty()
+            } else if (!com.lagradost.cloudstream3.plugins.OpenstreamRepoManager.isDefaultRepositoryAdded()
+                || (PluginManager.getPluginsOnline().isEmpty() && PluginManager.getPluginsLocal().isEmpty())
             ) {
                 navController.navigate(
                     R.id.navigation_setup_extensions,
