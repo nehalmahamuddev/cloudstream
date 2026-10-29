@@ -68,8 +68,8 @@ minSdk = "23"
 compileSdk = "37"
 targetSdk = "36"
 
-versionCode = "82"
-versionName = "1.0.11"
+versionCode = "83"
+versionName = "1.0.12"
 
 googleServicesPlugin = "4.4.2"
 firebaseCrashlyticsPlugin = "3.0.3"
