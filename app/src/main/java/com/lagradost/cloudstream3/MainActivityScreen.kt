@@ -301,15 +301,11 @@ object MainActivityScreen : Screen {
                                 modifier = Modifier.size(48.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
-                                    val icon = runCatching { painterResource(R.drawable.ic_openstream_logo) }.getOrNull()
-                                        ?: runCatching { painterResource(R.drawable.mobile_arrow_down_24px) }.getOrNull()
-                                    if (icon != null) {
-                                        Image(
-                                            painter = icon,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(34.dp)
-                                        )
-                                    }
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_openstream_logo),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(34.dp)
+                                    )
                                 }
                             }
 
@@ -517,15 +513,11 @@ object MainActivityScreen : Screen {
                             modifier = Modifier.size(52.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                val icon = runCatching { painterResource(R.drawable.ic_openstream_logo) }.getOrNull()
-                                    ?: runCatching { painterResource(R.drawable.mobile_arrow_down_24px) }.getOrNull()
-                                if (icon != null) {
-                                    Image(
-                                        painter = icon,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(36.dp)
-                                    )
-                                }
+                                Image(
+                                    painter = painterResource(R.drawable.ic_openstream_logo),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(36.dp)
+                                )
                             }
                         }
 
