@@ -9,6 +9,13 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
 object Colors {
+    val primaryButton
+        @Composable @ReadOnlyComposable get() = ButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
+        )
     internal val blackButton
         @Composable @ReadOnlyComposable get() = ButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,

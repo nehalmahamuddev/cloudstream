@@ -54,6 +54,8 @@ import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_USERNAME
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import com.lagradost.cloudstream3.utils.parseMarkdown
 import com.lagradost.cloudstream4.compose.BlackButton
+import com.lagradost.cloudstream4.compose.CloudStreamThemeAppSettings
+import com.lagradost.cloudstream4.compose.PrimaryButton
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.rememberAppSettings
@@ -107,7 +109,9 @@ object MainActivityScreen : Screen {
     fun GithubView() {
         val updateViewModel = githubViewModel() ?: return
         val state by updateViewModel.state.collectAsState()
-        GithubState(state, updateViewModel::onAction)
+        CloudStreamThemeAppSettings {
+            GithubState(state, updateViewModel::onAction)
+        }
     }
 
     @Composable
@@ -268,199 +272,203 @@ object MainActivityScreen : Screen {
                 usePlatformDefaultWidth = false
             )
         ) {
-            Surface(
-                shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
-                shadowElevation = 10.dp,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
-                modifier = Modifier
-                    .fillMaxWidth(0.92f)
-                    .widthIn(max = 440.dp)
-                    .padding(vertical = 16.dp)
-            ) {
-                Column(
+            CloudStreamThemeAppSettings {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                    shadowElevation = 12.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(22.dp)
+                        .fillMaxWidth(0.92f)
+                        .widthIn(max = 440.dp)
+                        .padding(vertical = 16.dp)
                 ) {
-                    // Header: App icon + Title + Version Badges
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(22.dp)
                     ) {
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                            modifier = Modifier.size(46.dp)
+                        // Header: App icon + Title + Version Badges
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Image(
-                                    painter = painterResource(R.mipmap.ic_launcher),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(32.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(14.dp))
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.update_available),
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp
-                               ),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            Surface(
+                                shape = RoundedCornerShape(14.dp),
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                                modifier = Modifier.size(48.dp)
                             ) {
-                                Surface(
-                                    shape = RoundedCornerShape(6.dp),
-                                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-                                ) {
-                                    Text(
-                                        text = formatVersionTag(oldVersion),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                Box(contentAlignment = Alignment.Center) {
+                                    Image(
+                                        painter = painterResource(R.mipmap.ic_launcher),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(34.dp)
                                     )
                                 }
+                            }
 
+                            Spacer(modifier = Modifier.width(14.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "→",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    text = stringResource(R.string.update_available),
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
 
-                                Surface(
-                                    shape = RoundedCornerShape(6.dp),
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
-                                    Text(
-                                        text = formatVersionTag(newVersion),
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Update Catalog Card
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp)
-                        ) {
-                            Text(
-                                text = catalog.title,
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                ),
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(max = 190.dp)
-                                    .verticalScroll(rememberScrollState()),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                catalog.items.forEach { item ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.Top
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
                                     ) {
                                         Text(
-                                            text = "•",
-                                            style = MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.primary
-                                            ),
-                                            modifier = Modifier.padding(end = 8.dp)
+                                            text = formatVersionTag(oldVersion),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
                                         )
+                                    }
+
+                                    Text(
+                                        text = "➜",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.45f))
+                                    ) {
                                         Text(
-                                            text = parseMarkdown(item),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurface
+                                            text = formatVersionTag(newVersion),
+                                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
                                         )
                                     }
                                 }
                             }
+                        }
 
-                            if (catalog.compareUrl != null) {
-                                val uriHandler = LocalUriHandler.current
-                                Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Update Catalog Card
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp)
+                            ) {
                                 Text(
-                                    text = stringResource(R.string.view_full_changelog),
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        fontWeight = FontWeight.Medium,
-                                        textDecoration = TextDecoration.Underline
+                                    text = catalog.title,
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        fontWeight = FontWeight.SemiBold
                                     ),
                                     color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier
-                                        .clickable {
-                                            try {
-                                                uriHandler.openUri(catalog.compareUrl)
-                                            } catch (_: Throwable) {}
-                                        }
-                                        .padding(vertical = 4.dp)
+                                    modifier = Modifier.padding(bottom = 8.dp)
                                 )
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(max = 190.dp)
+                                        .verticalScroll(rememberScrollState()),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    catalog.items.forEach { item ->
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.Top
+                                        ) {
+                                            Text(
+                                                text = "•",
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = MaterialTheme.colorScheme.primary
+                                                ),
+                                                modifier = Modifier.padding(end = 8.dp)
+                                            )
+                                            Text(
+                                                text = parseMarkdown(item),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                }
+
+                                if (catalog.compareUrl != null) {
+                                    val uriHandler = LocalUriHandler.current
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = stringResource(R.string.view_full_changelog),
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.Medium,
+                                            textDecoration = TextDecoration.Underline
+                                        ),
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier
+                                            .clickable {
+                                                try {
+                                                    uriHandler.openUri(catalog.compareUrl)
+                                                } catch (_: Throwable) {}
+                                            }
+                                            .padding(vertical = 4.dp)
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                    // Action buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        BlackButton(
-                            text = stringResource(R.string.later),
-                            onClick = onDismiss,
-                            modifier = Modifier.weight(1f)
-                        )
-                        WhiteButton(
-                            text = stringResource(R.string.update),
-                            onClick = onUpdate,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                        // Action buttons - Primary button flows with active App Theme color!
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            BlackButton(
+                                text = stringResource(R.string.later),
+                                onClick = onDismiss,
+                                modifier = Modifier.weight(1f)
+                            )
+                            PrimaryButton(
+                                text = stringResource(R.string.update),
+                                onClick = onUpdate,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.skip_update),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier
-                                .clickable(onClick = onSkip)
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.skip_update),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                                modifier = Modifier
+                                    .clickable(onClick = onSkip)
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -480,107 +488,110 @@ object MainActivityScreen : Screen {
                 usePlatformDefaultWidth = false
             )
         ) {
-            Surface(
-                shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
-                shadowElevation = 10.dp,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
-                modifier = Modifier
-                    .fillMaxWidth(0.92f)
-                    .widthIn(max = 400.dp)
-                    .padding(vertical = 16.dp)
-            ) {
-                Column(
+            CloudStreamThemeAppSettings {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                    shadowElevation = 12.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth(0.92f)
+                        .widthIn(max = 400.dp)
+                        .padding(vertical = 16.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                        modifier = Modifier.size(52.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Image(
-                                painter = painterResource(R.mipmap.ic_launcher),
-                                contentDescription = null,
-                                modifier = Modifier.size(36.dp)
-                            )
+                        Surface(
+                            shape = RoundedCornerShape(14.dp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                            modifier = Modifier.size(52.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Image(
+                                    painter = painterResource(R.mipmap.ic_launcher),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(36.dp)
+                                )
+                            }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = stringResource(R.string.update_notification_downloading),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    val total = state.total
-                    val progress = if (total != null && total > 0) {
-                        (state.progress.toFloat() / total.toFloat()).coerceIn(0.0f, 1.0f)
-                    } else {
-                        null
-                    }
-
-                    if (progress != null) {
-                        LinearProgressIndicator(
-                            progress = { progress },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        Text(
+                            text = stringResource(R.string.update_notification_downloading),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
                         )
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
+                        val total = state.total
+                        val progress = if (total != null && total > 0) {
+                            (state.progress.toFloat() / total.toFloat()).coerceIn(0.0f, 1.0f)
+                        } else {
+                            null
+                        }
+
+                        if (progress != null) {
+                            LinearProgressIndicator(
+                                progress = { progress },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "${formatFileSize(LocalContext.current, state.progress)} / ${formatFileSize(LocalContext.current, total ?: 0)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "${(progress * 100).toInt()}%",
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else {
+                            LinearProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
                             Text(
-                                text = "${formatFileSize(LocalContext.current, state.progress)} / ${formatFileSize(LocalContext.current, total ?: 0)}",
+                                text = formatFileSize(LocalContext.current, state.progress),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Text(
-                                text = "${(progress * 100).toInt()}%",
-                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.primary
-                            )
                         }
-                    } else {
-                        LinearProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        )
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        Text(
-                            text = formatFileSize(LocalContext.current, state.progress),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        BlackButton(
+                            text = stringResource(R.string.cancel),
+                            onClick = onCancel,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    BlackButton(
-                        text = stringResource(R.string.cancel),
-                        onClick = onCancel,
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
             }
         }
@@ -592,39 +603,41 @@ object MainActivityScreen : Screen {
             onDismissRequest = onDismiss,
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .widthIn(max = 340.dp)
-                    .padding(vertical = 16.dp)
-            ) {
-                Column(
+            CloudStreamThemeAppSettings {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth(0.85f)
+                        .widthIn(max = 340.dp)
+                        .padding(vertical = 16.dp)
                 ) {
-                    LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.loading),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    BlackButton(
-                        text = stringResource(R.string.cancel),
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.loading),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        BlackButton(
+                            text = stringResource(R.string.cancel),
+                            onClick = onDismiss,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
@@ -636,34 +649,36 @@ object MainActivityScreen : Screen {
             onDismissRequest = onDismiss,
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .widthIn(max = 340.dp)
-                    .padding(vertical = 16.dp)
-            ) {
-                Column(
+            CloudStreamThemeAppSettings {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth(0.85f)
+                        .widthIn(max = 340.dp)
+                        .padding(vertical = 16.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.no_update_found),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    WhiteButton(
-                        text = stringResource(R.string.ok),
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_update_found),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        PrimaryButton(
+                            text = stringResource(R.string.ok),
+                            onClick = onDismiss,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
@@ -679,50 +694,52 @@ object MainActivityScreen : Screen {
             onDismissRequest = onDismiss,
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .widthIn(max = 380.dp)
-                    .padding(vertical = 16.dp)
-            ) {
-                Column(
+            CloudStreamThemeAppSettings {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
+                        .fillMaxWidth(0.9f)
+                        .widthIn(max = 380.dp)
+                        .padding(vertical = 16.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.download_failed),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = error.getStackTracePretty(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Column(
                         modifier = Modifier
-                            .heightIn(max = 160.dp)
-                            .verticalScroll(rememberScrollState())
-                    )
-                    Spacer(modifier = Modifier.height(18.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            .fillMaxWidth()
+                            .padding(20.dp)
                     ) {
-                        BlackButton(
-                            text = stringResource(R.string.ok),
-                            onClick = onDismiss,
-                            modifier = Modifier.weight(1f)
+                        Text(
+                            text = stringResource(R.string.download_failed),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.error
                         )
-                        WhiteButton(
-                            text = stringResource(R.string.check_for_update),
-                            onClick = onRetry,
-                            modifier = Modifier.weight(1f)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = error.getStackTracePretty(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .heightIn(max = 160.dp)
+                                .verticalScroll(rememberScrollState())
                         )
+                        Spacer(modifier = Modifier.height(18.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            BlackButton(
+                                text = stringResource(R.string.ok),
+                                onClick = onDismiss,
+                                modifier = Modifier.weight(1f)
+                            )
+                            PrimaryButton(
+                                text = stringResource(R.string.check_for_update),
+                                onClick = onRetry,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
             }

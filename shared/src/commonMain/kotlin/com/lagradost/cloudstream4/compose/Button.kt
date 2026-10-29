@@ -28,6 +28,20 @@ import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
+fun PrimaryButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        buttonColors = Colors.primaryButton,
+        modifier = modifier
+    )
+}
+
+@Composable
 fun WhiteButton(
     text: String,
     modifier: Modifier = Modifier,
